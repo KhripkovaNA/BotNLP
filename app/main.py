@@ -4,7 +4,7 @@ from app.text_processing.router import router as processing_router
 
 # Инициализация FastAPI приложения
 app = FastAPI(
-    title="Мои Задачи"
+    title="Поиск по тексту"
 )
 
 # Подключение роутеров

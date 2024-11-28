@@ -8,6 +8,12 @@ def preprocess_text(text: str) -> List[str]:
     :param text: строка с текстом для обработки
     :return: список обработанных слов
     """
+    if not isinstance(text, str):
+        raise ValueError("Входной текст должен быть строкой")
+
+    if not text.strip():  # Если текст пустой, вернуть пустой список
+        return []
+
     # Обработка текста через spaCy
     doc = nlp(text)
 
