@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse
-
+from app.text_processing.router import router as processing_router
 
 # Инициализация FastAPI приложения
 app = FastAPI(
@@ -8,6 +8,7 @@ app = FastAPI(
 )
 
 # Подключение роутеров
+app.include_router(processing_router, prefix="/api", tags=["Text Processing"])
 
 
 # Глобальный обработчик для всех исключений, унаследованных от HTTPException

@@ -1,10 +1,8 @@
-import spacy
-
-# Загрузка русской языковой модели spaCy
-nlp = spacy.load("ru_core_news_sm")
+from typing import List
+from . import nlp
 
 
-def preprocess_text(text):
+def preprocess_text(text: str) -> List[str]:
     """
     Обрабатывает текст: токенизация, удаление стоп-слов, приведение к нижнему регистру и лемматизация.
     :param text: строка с текстом для обработки
