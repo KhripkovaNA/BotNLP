@@ -3,10 +3,9 @@ from pathlib import Path
 from typing import List, Tuple
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from app.text_processing.service import preprocess_text
-from app.text_search.create_tfidf_index import TFIDF_FOLDER
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+from app.text_search.create_tfidf import TFIDF_FOLDER
 
 
 # Загрузка модели и индекса
@@ -21,6 +20,7 @@ def load_tfidf_model_and_index(model_path: Path, matrix_path: Path) -> Tuple[Tfi
         vectorizer = pickle.load(model_file)
     with open(matrix_path, "rb") as matrix_file:
         tfidf_matrix = pickle.load(matrix_file)
+    tfidf_matrix = np.asarray(tfidf_matrix)
     return vectorizer, tfidf_matrix
 
 
@@ -36,8 +36,8 @@ def search_texts(
     :param texts: Исходные тексты, соответствующие индексу
     :return: Список из 3 текстов и их релевантности
     """
-    if not isinstance(query, str):
-        raise ValueError("Запрос должен быть строкой")
+    if not isinstance(query, str) or not query.strip():
+        raise ValueError("Запрос должен быть непустой строкой")
 
     # Обработка запроса
     processed_query = " ".join(preprocess_text(query))
@@ -46,7 +46,7 @@ def search_texts(
     query_vector = vectorizer.transform([processed_query])
 
     # Вычисление косинусного сходства
-    similarities = np.dot(tfidf_matrix, query_vector.T).toarray().flatten()
+    similarities = cosine_similarity(query_vector, tfidf_matrix).flatten()
 
     # Получение индексов топ-3 результатов
     top_indices = similarities.argsort()[-3:][::-1]
@@ -56,16 +56,16 @@ def search_texts(
     return results
 
 
+# Получение релевантных текстов
 def get_relevant_texts(query: str) -> List[Tuple[str, float]]:
     """
     Возвращает топ-3 релевантных текста для запроса
     :param query: Текст запроса
     :return: Список из 3 текстов и их релевантности
     """
-    models_folder = PROJECT_ROOT / TFIDF_FOLDER
-    model_path = models_folder / "tfidf_model.pkl"
-    matrix_path = models_folder / "tfidf_matrix.pkl"
-    texts_path = models_folder / "texts.pkl"
+    model_path = TFIDF_FOLDER / "tfidf_model.pkl"
+    matrix_path = TFIDF_FOLDER / "tfidf_matrix.pkl"
+    texts_path = TFIDF_FOLDER / "texts.pkl"
 
     # Проверяем наличие всех необходимых файлов
     missing_files = []

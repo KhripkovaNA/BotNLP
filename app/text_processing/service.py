@@ -1,5 +1,8 @@
 from typing import List
-from . import nlp
+import spacy
+
+# Загрузка русской языковой модели spaCy
+nlp = spacy.load("ru_core_news_sm")
 
 
 def preprocess_text(text: str) -> List[str]:

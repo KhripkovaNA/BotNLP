@@ -5,6 +5,7 @@ from app.main import app
 
 class TestPreprocessEndpoint(unittest.TestCase):
     def setUp(self):
+        """Создание тестовой среды"""
         self.client = TestClient(app)
 
     def test_preprocess_valid_text(self):
