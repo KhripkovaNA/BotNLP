@@ -2,6 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from app.text_processing.schemas import TextRequest
 from app.text_search.service import get_relevant_texts
+from app.text_search.create_tfidf import TFIDF_FOLDER
 
 router = APIRouter()
 
@@ -11,7 +12,7 @@ async def search_endpoint(request: Optional[TextRequest]):
     """Эндпоинт для поиска текста"""
     try:
         query = request.text
-        results = get_relevant_texts(query)
+        results = get_relevant_texts(query, TFIDF_FOLDER)
         return {"query": query, "results": results}
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))

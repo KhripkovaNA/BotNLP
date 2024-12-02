@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException
-from .schemas import TextRequest
-from .service import preprocess_text
+from app.text_processing.schemas import TextRequest
+from app.text_search.service import preprocess_text
 
 router = APIRouter()
 

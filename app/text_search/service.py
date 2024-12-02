@@ -5,7 +5,6 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from app.text_processing.service import preprocess_text
-from app.text_search.create_tfidf import TFIDF_FOLDER
 
 
 # Загрузка модели и индекса
@@ -20,7 +19,6 @@ def load_tfidf_model_and_index(model_path: Path, matrix_path: Path) -> Tuple[Tfi
         vectorizer = pickle.load(model_file)
     with open(matrix_path, "rb") as matrix_file:
         tfidf_matrix = pickle.load(matrix_file)
-    tfidf_matrix = np.asarray(tfidf_matrix)
     return vectorizer, tfidf_matrix
 
 
@@ -43,7 +41,7 @@ def search_texts(
     processed_query = " ".join(preprocess_text(query))
 
     # Преобразование запроса в вектор
-    query_vector = vectorizer.transform([processed_query])
+    query_vector = vectorizer.transform([processed_query]).toarray()
 
     # Вычисление косинусного сходства
     similarities = cosine_similarity(query_vector, tfidf_matrix).flatten()
@@ -52,20 +50,21 @@ def search_texts(
     top_indices = similarities.argsort()[-3:][::-1]
 
     # Возврат текстов и их релевантности
-    results = [(texts[i], similarities[i]) for i in top_indices if similarities[i] > 0]
+    results = [(texts[i], similarities[i]) for i in top_indices]
     return results
 
 
 # Получение релевантных текстов
-def get_relevant_texts(query: str) -> List[Tuple[str, float]]:
+def get_relevant_texts(query: str, tfidf_folder: Path) -> List[Tuple[str, float]]:
     """
     Возвращает топ-3 релевантных текста для запроса
     :param query: Текст запроса
+    :param tfidf_folder: Путь к папке с TF-IDF моделью и матрицей
     :return: Список из 3 текстов и их релевантности
     """
-    model_path = TFIDF_FOLDER / "tfidf_model.pkl"
-    matrix_path = TFIDF_FOLDER / "tfidf_matrix.pkl"
-    texts_path = TFIDF_FOLDER / "texts.pkl"
+    model_path = tfidf_folder / "tfidf_model.pkl"
+    matrix_path = tfidf_folder / "tfidf_matrix.pkl"
+    texts_path = tfidf_folder / "texts.pkl"
 
     # Проверяем наличие всех необходимых файлов
     missing_files = []

@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 
-class TestPreprocessEndpoint(unittest.TestCase):
+class TestTextProcessingEndpoint(unittest.TestCase):
     def setUp(self):
         """Создание тестовой среды"""
         self.client = TestClient(app)

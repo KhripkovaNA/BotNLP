@@ -2,7 +2,7 @@ import unittest
 from app.text_processing.service import preprocess_text
 
 
-class TestLibrary(unittest.TestCase):
+class TestTextProcessingService(unittest.TestCase):
     def test_process_text_normal(self):
         """Тест нормальной обработки текста"""
         original_text = "Привет! Как дела? Это пример текста для обработки с помощью NLP"

@@ -64,15 +64,15 @@ def create_tfidf_model_and_index(processed_texts: List[str]) -> Tuple[TfidfVecto
     if not processed_texts:
         raise ValueError("Обработанные тексты пусты. Создание TF-IDF невозможно")
     vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(processed_texts)
+    tfidf_matrix = vectorizer.fit_transform(processed_texts).toarray()
     return vectorizer, tfidf_matrix
 
 
-def save_tfidf_model_and_index():
+def save_tfidf_model_and_index(data_folder, tfidf_folder):
     try:
         # Загрузка текстов
         print("Загрузка текстов...")
-        texts = load_texts_from_folder(DATA_FOLDER, "text")
+        texts = load_texts_from_folder(data_folder, "text")
         print(f"Загружено {len(texts)} текстов")
 
         # Предобработка текстов
@@ -84,13 +84,13 @@ def save_tfidf_model_and_index():
 
         # Сохранение модели и индекса
         print("Сохранение модели и матрицы...")
-        TFIDF_FOLDER.mkdir(parents=True, exist_ok=True)
+        tfidf_folder.mkdir(parents=True, exist_ok=True)
 
-        with open(TFIDF_FOLDER / "texts.pkl", "wb") as texts_file:
+        with open(tfidf_folder / "texts.pkl", "wb") as texts_file:
             pickle.dump(texts, texts_file)
-        with open(TFIDF_FOLDER / "tfidf_model.pkl", "wb") as model_file:
+        with open(tfidf_folder / "tfidf_model.pkl", "wb") as model_file:
             pickle.dump(vectorizer, model_file)
-        with open(TFIDF_FOLDER / "tfidf_matrix.pkl", "wb") as matrix_file:
+        with open(tfidf_folder / "tfidf_matrix.pkl", "wb") as matrix_file:
             pickle.dump(tfidf_matrix, matrix_file)
 
         print("TF-IDF индекс успешно создан и сохранён")
@@ -99,4 +99,4 @@ def save_tfidf_model_and_index():
 
 
 if __name__ == "__main__":
-    save_tfidf_model_and_index()
+    save_tfidf_model_and_index(DATA_FOLDER, TFIDF_FOLDER)
